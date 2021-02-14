@@ -17,8 +17,11 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 public protocol WorldPlannable {
+    init()
     
-    func streetCount() -> Int
     func avenueCount() -> Int
-    func beeperGridLocations() -> [GridLocation]
+    func streetCount() -> Int 
+
+    func initialSituation() -> Situation
+    func goalSituation() -> Situation
 }

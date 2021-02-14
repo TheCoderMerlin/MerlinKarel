@@ -2,7 +2,7 @@ import Foundation
 import Scenes
 import ScenesAnimations
 import Igis
-
+ 
 /*
 MerlinKarel provides a Swift object library with support for Karel.
 MerlinKarel is inspired by Richard E. Pattis in his book
@@ -24,30 +24,41 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 class Karel: KarelRenderableEntity {
     typealias DidFinishNotification = () -> ()
     
-    let url = URL(string: "https://www.codermerlin.com/resources/BlueRobotWithHat.png")
-    let image: Image
-    var imageLocation: Point? = nil
-    var imageSize: Size? = nil
+    private let url = URL(string: "https://www.codermerlin.com/resources/BlueRobotWithHat.png")
+    private let image: Image
+    private let beeperText: Text
+    private var imageLocation: Point? = nil
+    private var imageSize: Size? = nil
 
-    var tweenTranslate: Tween<Point>? = nil
-    var tweenRotate: Tween<Double>? = nil
+
+    private var tweenTranslate: Tween<Point>? = nil
+    private var tweenRotate: Tween<Double>? = nil
     
-    var currentGridLocation = GridLocation(avenue: 1, street: 1)
-    var nextGridLocation = GridLocation(avenue: 1, street: 1)
+    private(set) var currentGridLocation = GridLocation.one
+    private var nextGridLocation = GridLocation.one
 
-    var didFinishNotification: DidFinishNotification? = nil
+    private var didFinishNotification: DidFinishNotification? = nil
 
-    var currentRotateRadians = 0.0
-    var nextRotateRadians = 0.0
+    private var currentRotateRadians = 0.0
+    private var nextRotateRadians = 0.0
 
-    var currentDirection = CompassDirection.north
-    var nextDirection = CompassDirection.north
+    private(set) var currentDirection = CompassDirection.north
+    private var nextDirection = CompassDirection.north
+
+    private var initialGridLocation = GridLocation.one
+    private var initialCompassDirection = CompassDirection.north
+    private var initialBeeperCount = 0
+
+    private(set) var beeperCount = 0
     
     init() {
         guard let url = url else {
             fatalError("Unable to form url")
         }
         image = Image(sourceURL: url)
+        beeperText = Text(location: Point.zero, text: "0")
+        beeperText.alignment = .center
+        beeperText.baseline = .top
 
         super.init(name: "Karel")
     }
@@ -64,18 +75,45 @@ class Karel: KarelRenderableEntity {
         return world.pointOnGrid(at: gridLocation) - imageSize.center
     }
 
+    func setInitial(gridLocation: GridLocation, compassDirection: CompassDirection, beeperCount: Int) {
+        initialGridLocation = gridLocation
+        initialCompassDirection = compassDirection
+        initialBeeperCount = beeperCount
+    }
+
+    func interactionLayer() -> InteractionLayer {
+        guard let layer = layer as? InteractionLayer else {
+            fatalError("InteractionLayer required")
+        }
+        return layer
+    }
+
     override func setup(canvasSize: Size, canvas: Canvas) {
         canvas.setup(image)
 
+        // Determine image size
         let size = min(canvasSize.width, canvasSize.height) / 10
         imageSize = Size(width: size, height: size)
         imageLocation = pointFrom(gridLocation: currentGridLocation)
+
+        // Determine font size
+        let fontSize = size / 6
+        beeperText.font = "\(fontSize)pt \(Style.karelBeeperFont)"
+
+        // Set initial location, direction and beeper count
+        self.move(to: initialGridLocation)
+        self.rotate(to: initialCompassDirection)
+        self.beeperCount = initialBeeperCount
     }
     
     override func render(canvas: Canvas) {
         if world != nil {
             if image.isReady {
                 canvas.render(image)
+
+                if beeperCount > 0 {
+                    canvas.render(Style.karelBeeperTextFillStyle, beeperText)
+                }
             }
         }
     }
@@ -86,13 +124,8 @@ class Karel: KarelRenderableEntity {
             fatalError("world is required to calculate")
         }
 
-        // If we're currently animating, we add a smidgen of jitter
-        let targetLocation = (tweenTranslate?.isPlaying == true || tweenRotate?.isPlaying == true) ?
-          Point(x: imageLocation.x + Int.random(in: -1...1), y: imageLocation.y + Int.random(in: -1...1)) :
-          imageLocation
-
         // Set position
-        let targetRect = Rect(topLeft: targetLocation, size: imageSize)
+        let targetRect = Rect(topLeft: imageLocation, size: imageSize)
         image.renderMode = .destinationRect(targetRect)
 
         // Rotate as indicated
@@ -101,6 +134,11 @@ class Karel: KarelRenderableEntity {
         let rotate = Transform(rotateRadians: currentRotateRadians)
         let postTranslate = Transform(translate: -center)
         setTransforms(transforms:[preTranslate, rotate, postTranslate])
+
+        // Set text
+        beeperText.text = "\(beeperCount)"
+        let textOffset = Point(x: 0, y: imageSize.height / 5)
+        beeperText.location = Point(center) + textOffset
 
         // If we were animating and now completed, clean up and inform our callback (if specified)
         if tweenTranslate?.isCompleted == true {
@@ -228,4 +266,16 @@ class Karel: KarelRenderableEntity {
     func isFacing(direction: CompassDirection) -> Bool {
         return direction == self.currentDirection
     }
+
+    func addBeeper() {
+        beeperCount += 1
+    }
+
+    func removeBeeper() {
+        guard beeperCount >= 1 else {
+            fatalError("karel doesn't have any beepers")
+        }
+        beeperCount -= 1
+    }
+
 }

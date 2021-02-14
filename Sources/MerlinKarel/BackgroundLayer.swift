@@ -20,7 +20,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 class BackgroundLayer : Layer {
     let background = Background()
-    let grid = Grid(streetCount: 20, avenueCount: 20)
+    let grid = Grid()
 
       init() {
           super.init(name:"Background")

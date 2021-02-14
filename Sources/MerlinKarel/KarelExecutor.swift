@@ -23,13 +23,16 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // enabling Igis to proceed normally
 // Each statement in the plan completes in Igis
 // before the next statement begins
+// If an error occurs 'isTerminated' will be set to true
+// and further commands will be ignored
 
 open class KarelExecutor {
 
     private weak var karel: Karel?
     private let semaphore = DispatchSemaphore(value: 0)
+    private var isTerminated = false
     
-    public init() {
+    public required init() {
     }
 
     internal func karelDidFinishNotification() {
@@ -44,7 +47,16 @@ open class KarelExecutor {
     // Begins the execution process of run on a separate thread
     internal func execute() {
         DispatchQueue(label: "KarelExecutor").asyncAfter(deadline: .now() + .milliseconds(1_000)) {
+            // Run instructions
+            self.printKarel(isSuccessful: true, "Started")
+            
             self.run()
+
+            if self.isTerminated {
+                self.printKarel(isSuccessful: false, "HALTED ON ERROR")
+            } else {
+                self.printKarel(isSuccessful: true, "Finished")
+            }
         }
     }
 
@@ -71,7 +83,9 @@ open class KarelExecutor {
 
     // Move karel forward in the direction he is facing
     public func move() {
-        printKarel(isSuccessful: true, "move()")
+        guard !isTerminated else {
+            return
+        }
         guard let karel = karel else {
             fatalError("karel is required for move()")
         }
@@ -81,7 +95,9 @@ open class KarelExecutor {
 
     // Turn karel counterclockwise ninety degrees
     public func turnLeft() {
-        printKarel(isSuccessful: true, "turnLeft()")
+        guard !isTerminated else {
+            return
+        }
         guard let karel = karel else {
             fatalError("karel is required for turnLeft()")
         }
@@ -89,48 +105,88 @@ open class KarelExecutor {
         semaphore.wait()
     }
 
-    // // Turn karel clockwise ninety degrees
-    // public func turnRight() {
-    //     printKarel(isSuccessful: true, "turnRight()")
-    //     guard let karel = karel else {
-    //         fatalError("karel is required for turnRight()")
-    //     }
-    //     karel.animateTurnRight()
-    //     semaphore.wait()
-    // }
-
     // Place a beeper at the current corner (multiple beepers may be placed)
     public func putDownBeeper() {
+        guard !isTerminated else {
+            return
+        }
+        guard let karel = karel else {
+            fatalError("karel is required for putDownBeeper()")
+        }
+        guard karel.beeperCount > 0 else {
+            printKarel(isSuccessful: false, "Karel doesn't have any beepers to put down")
+            isTerminated = true
+            return
+        }
+
+        karel.removeBeeper()
+        karel.interactionLayer().add(beeperAt: karel.currentGridLocation)
     }
 
 
     // Picks up a beeper from the current corner
     // Error if there are no beepers on the corner
     public func pickUpBeeper() {
+        guard !isTerminated else {
+            return
+        }
+        guard let karel = karel else {
+            fatalError("karel is required for putDownBeeper()")
+        }
+
+        let gridLocation = karel.currentGridLocation
+        guard karel.interactionLayer().beeperCount(at: gridLocation) > 0 else {
+            printKarel(isSuccessful: false, "There are no beepers to pick up")
+            isTerminated = true
+            return
+        }
+
+        karel.interactionLayer().remove(beeperAt: gridLocation)
+        karel.addBeeper()
     }
 
     // Returns true iff karel may proceed foward
     public func isFrontClear() -> Bool {
+        guard !isTerminated else {
+            return false
+        }
         return false
     }
 
     // Returns true iff karel may proceed to the left
     public func isLeftClear() -> Bool {
+        guard !isTerminated else {
+            return false
+        }
         return false
     }
 
     // Returns true iff karel may proceed to the right
     public func isRightClear() -> Bool {
+        guard !isTerminated else {
+            return false
+        }
         return false
     }
 
     // Returns true iff there is a beeper on the corner where karel is located
     public func isBeeperHere() -> Bool {
-        return false
+        guard !isTerminated else {
+            return false
+        }
+        guard let karel = karel else {
+            fatalError("karel is required for isBeeperHere()")
+        }
+
+        let gridLocation = karel.currentGridLocation
+        return karel.interactionLayer().beeperCount(at: gridLocation) > 0
     }
 
     // Returns true iff karel is facing north
     public func isFacingNorth() -> Bool {
+        guard !isTerminated else {
+            return false
+        }
         guard let karel = karel else {
             fatalError("karel is required for isFacingNorth()")
         }
@@ -139,6 +195,9 @@ open class KarelExecutor {
 
     // Returns true iff karel is facing east
     public func isFacingEast() -> Bool {
+        guard !isTerminated else {
+            return false
+        }
         guard let karel = karel else {
             fatalError("karel is required for isFacingEast()")
         }
@@ -147,6 +206,9 @@ open class KarelExecutor {
 
     // Returns true iff karel is facing south
     public func isFacingSouth() -> Bool {
+        guard !isTerminated else {
+            return false
+        }
         guard let karel = karel else {
             fatalError("karel is required for isFacingSouth()")
         }
@@ -155,6 +217,9 @@ open class KarelExecutor {
 
     // Returns true iff karel is facing west
     public func isFacingWest() -> Bool {
+        guard !isTerminated else {
+            return false
+        }
         guard let karel = karel else {
             fatalError("karel is required for isFacingWest()")
         }

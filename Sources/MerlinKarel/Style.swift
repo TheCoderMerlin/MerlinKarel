@@ -42,4 +42,11 @@ class Style {
     static let beeperStrokeStyle = StrokeStyle(color: Color(.orange))
     static let beeperGradientCenterColor   = Color(.red)
     static let beeperGradientEdgeColor     = Color(.orange)
+    
+    static let beeperTextFillStyle         = FillStyle(color: Color(.black))
+    static let beeperFont                  = "20pt Courier"
+
+    // Karel
+    static let karelBeeperTextFillStyle = FillStyle(color: Color(.white))
+    static let karelBeeperFont = "Courier" // size determined dynamically
 }

@@ -20,31 +20,36 @@ import Igis
 
 class World {
     
-    let streetCount: Int
     let avenueCount: Int
-    let beeperGridLocations: [GridLocation]
+    let streetCount: Int
 
     let pixelsBetweenStreets: Int
     let pixelsBetweenAvenues: Int
+
+    let initialSituation: Situation
+    let goalSituation: Situation
     
-    
-    init(streetCount: Int, avenueCount: Int, beeperGridLocations: [GridLocation],
-         pixelsBetweenStreets: Int, pixelsBetweenAvenues: Int) {
-        self.streetCount = streetCount
+    init(avenueCount: Int, streetCount: Int,
+         pixelsBetweenStreets: Int, pixelsBetweenAvenues: Int,
+         initialSituation: Situation, goalSituation: Situation) {
         self.avenueCount = avenueCount
-        self.beeperGridLocations = beeperGridLocations
+        self.streetCount = streetCount
 
         self.pixelsBetweenStreets = pixelsBetweenStreets
         self.pixelsBetweenAvenues = pixelsBetweenAvenues
+
+        self.initialSituation = initialSituation
+        self.goalSituation = goalSituation
     }
 
     convenience init(canvasSize: Size,
-                     worldPlanner: WorldPlannable) {
-        let pixelsBetweenStreets = (canvasSize.height - (Style.worldTopMargin + Style.worldBottomMargin)) / (worldPlanner.streetCount() - 1)
-        let pixelsBetweenAvenues = (canvasSize.width - (Style.worldLeftMargin + Style.worldRightMargin)) / (worldPlanner.avenueCount()  - 1)
+                     worldPlannable: WorldPlannable) {
+        let pixelsBetweenStreets = (canvasSize.height - (Style.worldTopMargin + Style.worldBottomMargin)) / (worldPlannable.streetCount() - 1)
+        let pixelsBetweenAvenues = (canvasSize.width - (Style.worldLeftMargin + Style.worldRightMargin)) / (worldPlannable.avenueCount()  - 1)
 
-        self.init(streetCount: worldPlanner.streetCount(), avenueCount: worldPlanner.avenueCount(), beeperGridLocations: worldPlanner.beeperGridLocations(),
-                  pixelsBetweenStreets: pixelsBetweenStreets, pixelsBetweenAvenues: pixelsBetweenAvenues)
+        self.init(avenueCount: worldPlannable.avenueCount(), streetCount: worldPlannable.streetCount(), 
+                  pixelsBetweenStreets: pixelsBetweenStreets, pixelsBetweenAvenues: pixelsBetweenAvenues,
+                  initialSituation: worldPlannable.initialSituation(), goalSituation: worldPlannable.goalSituation())
     }
 
     func pointOnGrid(at gridLocation: GridLocation) -> Point {

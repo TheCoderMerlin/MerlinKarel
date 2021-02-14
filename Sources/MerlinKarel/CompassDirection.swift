@@ -16,7 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-enum CompassDirection: Double {
+public enum CompassDirection: Double {
     case north = 0
     case east  = 90
     case south = 180

@@ -25,13 +25,13 @@ public class MainScene : Scene {
     let interactionLayer = InteractionLayer()
     let foregroundLayer = ForegroundLayer()
 
-    let worldPlanner: WorldPlannable
+    let worldPlannable: WorldPlannable
     let karelExecutor: KarelExecutor
 
     var world: World? = nil
 
-    public init(worldPlanner: WorldPlannable, karelExecutor: KarelExecutor) {
-        self.worldPlanner = worldPlanner
+    public init(worldPlannable: WorldPlannable, karelExecutor: KarelExecutor) {
+        self.worldPlannable = worldPlannable
         self.karelExecutor = karelExecutor
         
         // Using a meaningful name can be helpful for debugging
@@ -43,13 +43,27 @@ public class MainScene : Scene {
         insert(layer:interactionLayer, at:.inFrontOf(object:backgroundLayer))
         insert(layer:foregroundLayer, at:.front)
 
-        // Set up karel for later execution
+        // Set up karel
         karelExecutor.setKarel(karel: interactionLayer.karel)
-        karelExecutor.execute()
+
     }
 
     public override func preSetup(canvasSize: Size, canvas: Canvas) {
-        world = World(canvasSize: canvasSize, worldPlanner: worldPlanner)
+        // Set up world
+        world = World(canvasSize: canvasSize, worldPlannable: worldPlannable)
+
+        // Set up beepers
+        for (gridLocation, count) in world!.initialSituation.gridLocationBeeperCounts {
+            interactionLayer.add(beeperAt: gridLocation, count: count)
+        }
+
+        // Set up karel
+        interactionLayer.karel.setInitial(gridLocation: world!.initialSituation.karelGridLocation,
+                                          compassDirection: world!.initialSituation.karelCompassDirection,
+                                          beeperCount: world!.initialSituation.karelBeeperCount)
+        
+        // Begin execution
+        karelExecutor.execute()
     }
     
 }

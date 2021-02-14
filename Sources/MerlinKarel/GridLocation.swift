@@ -16,12 +16,22 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-public struct GridLocation: Hashable {
+public struct GridLocation: Hashable, Comparable, CustomStringConvertible {
     let avenue: Int
     let street: Int
 
     public init(avenue:Int, street: Int) {
         self.avenue = avenue
         self.street = street
+    }
+
+    static let one = GridLocation(avenue: 1, street: 1)
+    
+    public static func < (lhs: GridLocation, rhs: GridLocation) -> Bool {
+        return (lhs.avenue, lhs.street) < (rhs.avenue, rhs.street)
+    }
+
+    public var description: String {
+        return "(avenue: \(avenue), street: \(street))"
     }
 }

@@ -22,16 +22,24 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 class Beeper: KarelRenderableEntity {
 
-    let gridLocation: GridLocation
-    let ellipse = Ellipse(center: Point.zero, radiusX: 0, radiusY: 0, fillMode: .fillAndStroke)
-    let circle = Ellipse(center: Point.zero, radiusX: 0, radiusY: 0, fillMode: .fillAndStroke)
+    private let gridLocation: GridLocation
+    private let ellipse = Ellipse(center: Point.zero, radiusX: 0, radiusY: 0, fillMode: .fillAndStroke)
+    private let circle = Ellipse(center: Point.zero, radiusX: 0, radiusY: 0, fillMode: .fillAndStroke)
+    private let beeperText = Text(location: Point.zero, text: "0")
     
-    var gradient: Gradient? = nil
+    private var gradient: Gradient? = nil
 
-    var rotateRadians = 0.0
+    private var rotateRadians = 0.0
 
-    init(gridLocation: GridLocation) {
+    private var countIndicator: Int 
+
+    init(gridLocation: GridLocation, initialCount: Int) {
         self.gridLocation = gridLocation
+        self.countIndicator = initialCount
+
+        beeperText.font = Style.beeperFont
+        beeperText.alignment = .center
+        beeperText.baseline = .middle
     }
 
     override func setup(canvasSize: Size, canvas: Canvas) {
@@ -47,8 +55,10 @@ class Beeper: KarelRenderableEntity {
         circle.radiusX = size 
         circle.radiusY = size
 
-        ellipse.center = world.pointOnGrid(at: gridLocation)
-        circle.center = world.pointOnGrid(at: gridLocation)
+        let location = world.pointOnGrid(at: gridLocation)
+        ellipse.center = location
+        circle.center = location
+        beeperText.location = location
 
         gradient = Gradient(mode: .radial(center1: circle.center, radius1: 0,
                                           center2: circle.center, radius2: Double(circle.radiusX)))
@@ -56,7 +66,7 @@ class Beeper: KarelRenderableEntity {
         gradient!.addColorStop(ColorStop(position: 1.0, color: Style.beeperGradientEdgeColor))
         canvas.setup(gradient!)
 
-        let tweenRotation = Tween(from: 0.0, to: Double.pi, duration: Style.animationDurationSeconds / 2.0, ease: .linear) {self.rotateRadians = $0}
+        let tweenRotation = Tween(from: 0.0, to: 2.0 * Double.pi, duration: Style.animationDurationSeconds, ease: .linear) {self.rotateRadians = $0}
         tweenRotation.repeatStyle = .forever
         animationController.register(animation: tweenRotation)
         tweenRotation.play()
@@ -64,6 +74,9 @@ class Beeper: KarelRenderableEntity {
     }
 
     override func calculate(canvasSize: Size) {
+        // Set text
+        beeperText.text = "\(countIndicator)"
+        
         // Rotate as indicated
         let center = DoublePoint(ellipse.center)
         let preTranslate = Transform(translate: center)
@@ -78,7 +91,22 @@ class Beeper: KarelRenderableEntity {
             let fillStyle = FillStyle(gradient: gradient)
             canvas.render(fillStyle, Style.beeperStrokeStyle,
                           ellipse, circle)
+
+            canvas.render(Style.beeperTextFillStyle, beeperText)
         }
+    }
+
+    func count() -> Int {
+        return countIndicator
+    }
+
+    func increment(count: Int = 1) {
+        countIndicator += count
+    }
+
+    func decrement() {
+        precondition(countIndicator >= 1, "No beepers to remove")
+        countIndicator -= 1
     }
     
 }

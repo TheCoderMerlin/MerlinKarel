@@ -32,17 +32,33 @@ class InteractionLayer : Layer {
         insert(entity: karel, at: .front)
     }
 
-    func add(beeperAt gridLocation: GridLocation) {
-        precondition(gridBeepers[gridLocation] == nil, "The specificed location \(gridLocation) already contains a beeper.")
-
-        let beeper = Beeper(gridLocation: gridLocation)
-        gridBeepers[gridLocation] = beeper
-        insert(entity: beeper, at: .front)
+    func add(beeperAt gridLocation: GridLocation, count: Int = 1) {
+        if gridBeepers[gridLocation] != nil {
+            gridBeepers[gridLocation]!.increment(count: count)
+        } else {
+            let beeper = Beeper(gridLocation: gridLocation, initialCount: count)
+            gridBeepers[gridLocation] = beeper 
+            insert(entity: beeper, at: .back)
+        }
     }
 
     func remove(beeperAt gridLocation: GridLocation) {
-        precondition(gridBeepers[gridLocation] != nil, "The specified location \(gridLocation) does not contain a beeper.")
-        
-        gridBeepers.removeValue(forKey: gridLocation)
+        precondition(gridBeepers[gridLocation] != nil, "The specified location \(gridLocation) does not contain any beepers.")
+        precondition(gridBeepers[gridLocation]!.count() > 0, "The specified location \(gridLocation) does not contain enough beepers.")
+
+        let beeper = gridBeepers[gridLocation]!
+        beeper.decrement()
+        if beeper.count() == 0 {
+            self.remove(entity: beeper)
+            gridBeepers.removeValue(forKey: gridLocation)
+        }
+    }
+
+    func beeperCount(at gridLocation: GridLocation) -> Int {
+        if let beeper = gridBeepers[gridLocation] {
+            return beeper.count()
+        } else {
+            return 0
+        }
     }
 }
