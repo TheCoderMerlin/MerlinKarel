@@ -27,8 +27,10 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // and further commands will be ignored
 
 open class KarelExecutor {
-
+    typealias ExecutionCompletedHandlerType = (_ isSuccessful: Bool) -> ()
+    
     private weak var karel: Karel?
+    private var executionCompletedHandler: ExecutionCompletedHandlerType? = nil
     private let semaphore = DispatchSemaphore(value: 0)
     private var isTerminated = false
     
@@ -44,6 +46,10 @@ open class KarelExecutor {
         karel.setDidFinishNotification(karelDidFinishNotification)
     }
 
+    internal func setExecutionCompletedHandler(executionCompletedHandler: @escaping ExecutionCompletedHandlerType) {
+        self.executionCompletedHandler = executionCompletedHandler
+    }
+
     // Begins the execution process of run on a separate thread
     internal func execute() {
         DispatchQueue(label: "KarelExecutor").asyncAfter(deadline: .now() + .milliseconds(1_000)) {
@@ -56,6 +62,10 @@ open class KarelExecutor {
                 self.printKarel(isSuccessful: false, "HALTED ON ERROR")
             } else {
                 self.printKarel(isSuccessful: true, "Finished")
+            }
+
+            if let executionCompletedHandler = self.executionCompletedHandler {
+                executionCompletedHandler(!self.isTerminated)
             }
         }
     }

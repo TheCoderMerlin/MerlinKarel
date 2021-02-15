@@ -45,7 +45,7 @@ public class MainScene : Scene {
 
         // Set up karel
         karelExecutor.setKarel(karel: interactionLayer.karel)
-
+        karelExecutor.setExecutionCompletedHandler(executionCompletedHandler: executionCompletedHandler)
     }
 
     public override func preSetup(canvasSize: Size, canvas: Canvas) {
@@ -64,6 +64,13 @@ public class MainScene : Scene {
         
         // Begin execution
         karelExecutor.execute()
+    }
+
+    private func executionCompletedHandler(isSuccessful: Bool) {
+        guard let world = world else {
+            fatalError("world is required in executionCompeltedHandler")
+        }
+        print("Execution completed, successful: \(isSuccessful), merlinMissionManagerMode: \(world.isMerlinMissionManagerMode())")
     }
     
 }

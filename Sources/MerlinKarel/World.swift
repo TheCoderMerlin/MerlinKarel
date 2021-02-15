@@ -16,6 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+import Foundation
 import Igis
 
 class World {
@@ -57,6 +58,10 @@ class World {
         let y = Style.worldTopMargin  + pixelsBetweenStreets * (streetCount - gridLocation.street - 1)
 
         return Point(x: x, y: y)
+    }
+
+    func isMerlinMissionManagerMode() -> Bool {
+        return ProcessInfo.processInfo.environment["merlinMissionManagerMode"] == "IGIS"
     }
 
 }
