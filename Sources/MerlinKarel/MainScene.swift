@@ -1,3 +1,4 @@
+import Foundation
 import Igis
 import Scenes
 
@@ -70,7 +71,11 @@ public class MainScene : Scene {
         guard let world = world else {
             fatalError("world is required in executionCompeltedHandler")
         }
-        print("Execution completed, successful: \(isSuccessful), merlinMissionManagerMode: \(world.isMerlinMissionManagerMode())")
+
+        // Exit at this point with error code, only if we are in merlinMissionmanagermode
+        if world.isMerlinMissionManagerMode() {
+            exit(isSuccessful ? 0 : 1)
+        }
     }
     
 }
