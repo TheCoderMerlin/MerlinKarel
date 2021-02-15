@@ -16,7 +16,7 @@
  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-public class Situation: CustomStringConvertible {
+public class Situation: CustomStringConvertible, Equatable {
     public typealias GridLocationBeeperCounts = [GridLocation: Int]
     
     let karelGridLocation: GridLocation
@@ -50,6 +50,14 @@ public class Situation: CustomStringConvertible {
         }
 
         return s
+    }
+
+    public static func == (lhs: Situation, rhs: Situation) -> Bool {
+        return
+          lhs.karelGridLocation == rhs.karelGridLocation &&
+          lhs.karelCompassDirection == rhs.karelCompassDirection &&
+          lhs.karelBeeperCount == rhs.karelBeeperCount &&
+          lhs.gridLocationBeeperCounts == rhs.gridLocationBeeperCounts
     }
 
 

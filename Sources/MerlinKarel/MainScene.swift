@@ -111,14 +111,24 @@ public class MainScene : Scene, KeyDownHandler {
         dispatcher.unregisterKeyDownHandler(handler: self)
     }
 
-    private func executionCompletedHandler(isSuccessful: Bool) {
+    private func executionCompletedHandler(wasTerminated: Bool) {
         guard let world = world else {
             fatalError("world is required in executionCompeltedHandler")
         }
 
         // Exit at this point with error code, only if we are in merlinMissionmanagermode
         if world.isMerlinMissionManagerMode() {
-            exit(isSuccessful ? 0 : 1)
+            let goalMet = (!wasTerminated && world.goalSituation == interactionLayer.currentSituation())
+
+            guard let key = world.merlinMissionManagerKey() else {
+                fatalError("key required in merlinMissionManagerMode")
+            }
+            print("Success!")
+            print(key)
+
+            // Allow any running animations to complete
+            sleep(UInt32(Style.standardAnimationDurationSeconds * 2.0))
+            exit(goalMet ? 0 : 1)
         }
     }
 

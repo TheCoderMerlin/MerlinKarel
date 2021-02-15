@@ -63,4 +63,20 @@ class InteractionLayer : Layer {
             return 0
         }
     }
+
+    func currentSituation() -> Situation {
+        var gridLocationBeeperCounts = [GridLocation: Int]()
+        for (gridLocation, beeper) in gridBeepers {
+            if beeper.count() > 0 {
+                gridLocationBeeperCounts[gridLocation] = beeper.count()
+            }
+        }
+        let situation = Situation(karelGridLocation: karel.currentGridLocation,
+                                  karelCompassDirection: karel.currentDirection,
+                                  karelBeeperCount: karel.beeperCount,
+                                  gridLocationBeeperCounts: gridLocationBeeperCounts)
+        return situation
+    }
+
+    
 }

@@ -64,4 +64,7 @@ class World {
         return ProcessInfo.processInfo.environment["merlinMissionManagerMode"] == "IGIS"
     }
 
+    func merlinMissionManagerKey() -> String? {
+        return ProcessInfo.processInfo.environment["merlinMissionManagerKey"]
+    }
 }

@@ -27,7 +27,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // and further commands will be ignored
 
 open class KarelExecutor {
-    typealias ExecutionCompletedHandlerType = (_ isSuccessful: Bool) -> ()
+    typealias ExecutionCompletedHandlerType = (_ wasTerminated: Bool) -> ()
     
     private weak var karel: Karel?
     private var executionCompletedHandler: ExecutionCompletedHandlerType? = nil
@@ -69,7 +69,7 @@ open class KarelExecutor {
             }
 
             if let executionCompletedHandler = self.executionCompletedHandler {
-                executionCompletedHandler(!self.isTerminated)
+                executionCompletedHandler(self.isTerminated)
             }
         }
     }
