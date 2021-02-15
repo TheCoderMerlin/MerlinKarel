@@ -66,7 +66,7 @@ class Beeper: KarelRenderableEntity {
         gradient!.addColorStop(ColorStop(position: 1.0, color: Style.beeperGradientEdgeColor))
         canvas.setup(gradient!)
 
-        let tweenRotation = Tween(from: 0.0, to: 2.0 * Double.pi, duration: Style.animationDurationSeconds, ease: .linear) {self.rotateRadians = $0}
+        let tweenRotation = Tween(from: 0.0, to: 2.0 * Double.pi, duration: Style.standardAnimationDurationSeconds, ease: .linear) {self.rotateRadians = $0}
         tweenRotation.repeatStyle = .forever
         animationController.register(animation: tweenRotation)
         tweenRotation.play()

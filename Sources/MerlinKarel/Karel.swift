@@ -50,6 +50,8 @@ class Karel: KarelRenderableEntity {
     private var initialBeeperCount = 0
 
     private(set) var beeperCount = 0
+
+    private var animationDurationSeconds: Double = Style.standardAnimationDurationSeconds
     
     init() {
         guard let url = url else {
@@ -61,6 +63,10 @@ class Karel: KarelRenderableEntity {
         beeperText.baseline = .top
 
         super.init(name: "Karel")
+    }
+
+    func setAnimationDurationSeconds(_ durationSeconds: Double) {
+        animationDurationSeconds = durationSeconds
     }
 
     func setDidFinishNotification(_ didFinishNotification: @escaping DidFinishNotification) {
@@ -194,7 +200,7 @@ class Karel: KarelRenderableEntity {
             toRotation   = nextRotateRadians
         }
 
-        tweenRotate = Tween(from: fromRotation, to: toRotation, duration: Style.animationDurationSeconds, ease: EasingStyle.inCubic) {self.currentRotateRadians = $0}
+        tweenRotate = Tween(from: fromRotation, to: toRotation, duration: animationDurationSeconds, ease: EasingStyle.inCubic) {self.currentRotateRadians = $0}
         animationController.register(animation: tweenRotate!)
         tweenRotate!.play()
     }
@@ -219,7 +225,7 @@ class Karel: KarelRenderableEntity {
         let fromPoint = pointFrom(gridLocation: currentGridLocation)
         let toPoint = pointFrom(gridLocation: nextGridLocation)
 
-        tweenTranslate = Tween(from: fromPoint, to: toPoint, duration: Style.animationDurationSeconds, ease: EasingStyle.inCubic) {self.imageLocation = $0}
+        tweenTranslate = Tween(from: fromPoint, to: toPoint, duration: animationDurationSeconds, ease: EasingStyle.inCubic) {self.imageLocation = $0}
         animationController.register(animation: tweenTranslate!)
         tweenTranslate!.play()
     }

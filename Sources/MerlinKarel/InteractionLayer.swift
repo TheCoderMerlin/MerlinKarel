@@ -20,11 +20,13 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 class InteractionLayer : Layer {
 
-    let karel = Karel()
+    let karel: Karel
 
     private var gridBeepers = [GridLocation: Beeper]()
     
     init() {
+        karel = Karel()
+        
         // Using a meaningful name can be helpful for debugging
         super.init(name:"Interaction")
 

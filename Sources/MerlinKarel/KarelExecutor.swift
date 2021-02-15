@@ -33,6 +33,7 @@ open class KarelExecutor {
     private var executionCompletedHandler: ExecutionCompletedHandlerType? = nil
     private let semaphore = DispatchSemaphore(value: 0)
     private var isTerminated = false
+    private var isSilentRunning = false // iff true, suppress successful printing
     
     public required init() {
     }
@@ -51,7 +52,10 @@ open class KarelExecutor {
     }
 
     // Begins the execution process of run on a separate thread
-    internal func execute() {
+    internal func execute(isSilentRunning: Bool) {
+        // Run silently if so specified
+        self.isSilentRunning = isSilentRunning
+        
         DispatchQueue(label: "KarelExecutor").asyncAfter(deadline: .now() + .milliseconds(1_000)) {
             // Run instructions
             self.printKarel(isSuccessful: true, "Started")
@@ -71,13 +75,16 @@ open class KarelExecutor {
     }
 
     private func printKarel(isSuccessful: Bool, _ message:String) {
-        if isSuccessful {
-            print(Terminal.setColor(.green, .fore), terminator:"")
-        } else {
-            print(Terminal.setColor(.red, .fore), terminator:"")
+        if !isSuccessful || !isSilentRunning {
+            if isSuccessful {
+                print(Terminal.setColor(.green, .fore), terminator:"")
+            } else {
+                print(Terminal.setColor(.red, .fore), terminator:"")
+            }
+
+            print(Terminal.reverse(), "Karel:", Terminal.reset(), terminator:" ")
+            print(message)
         }
-        print(Terminal.reverse(), "Karel:", Terminal.reset(), terminator:" ")
-        print(message)
     }
     
 
@@ -99,6 +106,7 @@ open class KarelExecutor {
         guard let karel = karel else {
             fatalError("karel is required for move()")
         }
+        printKarel(isSuccessful: true, "move()")
         karel.animateForward()
         semaphore.wait()
     }
@@ -111,6 +119,8 @@ open class KarelExecutor {
         guard let karel = karel else {
             fatalError("karel is required for turnLeft()")
         }
+        printKarel(isSuccessful: true, "turnLeft()")
+        
         karel.animateTurnLeft()
         semaphore.wait()
     }
@@ -128,6 +138,7 @@ open class KarelExecutor {
             isTerminated = true
             return
         }
+        printKarel(isSuccessful: true, "putDownBeeper()")
 
         karel.removeBeeper()
         karel.interactionLayer().add(beeperAt: karel.currentGridLocation)
@@ -150,6 +161,7 @@ open class KarelExecutor {
             isTerminated = true
             return
         }
+        printKarel(isSuccessful: true, "pickUpBeeper()")
 
         karel.interactionLayer().remove(beeperAt: gridLocation)
         karel.addBeeper()
@@ -160,22 +172,8 @@ open class KarelExecutor {
         guard !isTerminated else {
             return false
         }
-        return false
-    }
+        printKarel(isSuccessful: true, "isFrontClear()")
 
-    // Returns true iff karel may proceed to the left
-    public func isLeftClear() -> Bool {
-        guard !isTerminated else {
-            return false
-        }
-        return false
-    }
-
-    // Returns true iff karel may proceed to the right
-    public func isRightClear() -> Bool {
-        guard !isTerminated else {
-            return false
-        }
         return false
     }
 
@@ -187,7 +185,8 @@ open class KarelExecutor {
         guard let karel = karel else {
             fatalError("karel is required for isBeeperHere()")
         }
-
+        printKarel(isSuccessful: true, "isBeeperHere()")
+        
         let gridLocation = karel.currentGridLocation
         return karel.interactionLayer().beeperCount(at: gridLocation) > 0
     }
@@ -200,40 +199,10 @@ open class KarelExecutor {
         guard let karel = karel else {
             fatalError("karel is required for isFacingNorth()")
         }
+        printKarel(isSuccessful: true, "isFacingNorth()")
+        
         return karel.isFacing(direction: .north)
     }
 
-    // Returns true iff karel is facing east
-    public func isFacingEast() -> Bool {
-        guard !isTerminated else {
-            return false
-        }
-        guard let karel = karel else {
-            fatalError("karel is required for isFacingEast()")
-        }
-        return karel.isFacing(direction: .east)
-    }
-
-    // Returns true iff karel is facing south
-    public func isFacingSouth() -> Bool {
-        guard !isTerminated else {
-            return false
-        }
-        guard let karel = karel else {
-            fatalError("karel is required for isFacingSouth()")
-        }
-        return karel.isFacing(direction: .south)
-    }
-
-    // Returns true iff karel is facing west
-    public func isFacingWest() -> Bool {
-        guard !isTerminated else {
-            return false
-        }
-        guard let karel = karel else {
-            fatalError("karel is required for isFacingWest()")
-        }
-        return karel.isFacing(direction: .west)
-    }
 
 }

@@ -19,6 +19,10 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 class Style {
+    // Background colors
+    static let initialBackgroundColor = Color(.aliceblue)
+    static let goalBackgroundColor = Color(.darkgoldenrod)
+    
     // Margins between the 'world' and the browser's edge
     static let worldLeftMargin = 50
     static let worldRightMargin = 50
@@ -36,7 +40,8 @@ class Style {
     static let gridTextFillStyle = FillStyle(color: Color(.darkslategray))
     static let gridFont = "30pt Arial"
 
-    static let animationDurationSeconds = 1.0
+    static let standardAnimationDurationSeconds = 1.0
+    static let merlinMissionManagerAnimationDurationSeconds = 0.0
 
     // Beepers
     static let beeperStrokeStyle = StrokeStyle(color: Color(.orange))
