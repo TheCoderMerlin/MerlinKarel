@@ -73,7 +73,9 @@ public class MainScene : Scene {
         }
 
         // Exit at this point with error code, only if we are in merlinMissionmanagermode
+        print("Execution completed, successful: \(isSuccessful), merlinMissionManagerMode: \(world.isMerlinMissionManagerMode())")
         if world.isMerlinMissionManagerMode() {
+            print("Exiting")
             exit(isSuccessful ? 0 : 1)
         }
     }
