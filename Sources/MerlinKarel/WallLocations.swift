@@ -16,9 +16,18 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-public enum CompassDirection: Double, Hashable {
-    case north = 0
-    case east  = 90
-    case south = 180
-    case west  = 270
+public struct WallLocations {
+    private(set) var walls = Set<WallLocation>()
+ 
+    public init() {
+    }
+
+    public mutating func addWall(at wallLocation: WallLocation) {
+        walls.insert(wallLocation)
+    }
+    
+    func isWall(at wallLocation: WallLocation) -> Bool {
+        let isPresent = walls.contains(wallLocation)
+        return isPresent
+    }
 }

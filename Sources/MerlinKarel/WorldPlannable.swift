@@ -20,7 +20,8 @@ public protocol WorldPlannable {
     init()
     
     func avenueCount() -> Int
-    func streetCount() -> Int 
+    func streetCount() -> Int
+    func wallLocations() -> WallLocations 
 
     func initialSituation() -> Situation
     func goalSituation() -> Situation

@@ -23,18 +23,20 @@ class World {
     
     let avenueCount: Int
     let streetCount: Int
+    let wallLocations: WallLocations
 
     let pixelsBetweenStreets: Int
     let pixelsBetweenAvenues: Int
 
     let initialSituation: Situation
     let goalSituation: Situation
-    
-    init(avenueCount: Int, streetCount: Int,
+
+    init(avenueCount: Int, streetCount: Int, wallLocations: WallLocations,
          pixelsBetweenStreets: Int, pixelsBetweenAvenues: Int,
          initialSituation: Situation, goalSituation: Situation) {
         self.avenueCount = avenueCount
         self.streetCount = streetCount
+        self.wallLocations = wallLocations
 
         self.pixelsBetweenStreets = pixelsBetweenStreets
         self.pixelsBetweenAvenues = pixelsBetweenAvenues
@@ -48,7 +50,7 @@ class World {
         let pixelsBetweenStreets = (canvasSize.height - (Style.worldTopMargin + Style.worldBottomMargin)) / (worldPlannable.streetCount() - 1)
         let pixelsBetweenAvenues = (canvasSize.width - (Style.worldLeftMargin + Style.worldRightMargin)) / (worldPlannable.avenueCount()  - 1)
 
-        self.init(avenueCount: worldPlannable.avenueCount(), streetCount: worldPlannable.streetCount(), 
+        self.init(avenueCount: worldPlannable.avenueCount(), streetCount: worldPlannable.streetCount(), wallLocations: worldPlannable.wallLocations(),
                   pixelsBetweenStreets: pixelsBetweenStreets, pixelsBetweenAvenues: pixelsBetweenAvenues,
                   initialSituation: worldPlannable.initialSituation(), goalSituation: worldPlannable.goalSituation())
     }
@@ -60,6 +62,43 @@ class World {
         return Point(x: x, y: y)
     }
 
+    var firstStreet: Int {
+        return 1
+    }
+
+    var lastStreet: Int {
+        return streetCount - 2
+    }
+
+    var firstAvenue: Int {
+        return 1
+    }
+
+    var lastAvenue: Int {
+        return avenueCount - 2
+    }
+
+    public func mayMoveForward(from gridLocation: GridLocation, heading: CompassDirection) -> Bool {
+        switch (gridLocation.avenue, gridLocation.street, heading) {
+        case (firstAvenue, _, .west):
+            return false
+        case (lastAvenue, _, .east):
+            return false
+        case (_, firstStreet, .south):
+            return false
+        case (_, lastStreet, .north):
+            return false
+        case (let avenue, let street, .north):
+            return !wallLocations.isWall(at: WallLocation(gridLocation: GridLocation(avenue: avenue, street: street), side: .above))
+        case (let avenue, let street, .east):
+            return !wallLocations.isWall(at: WallLocation(gridLocation: GridLocation(avenue: avenue, street: street), side: .right))
+        case (let avenue, let street, .south):
+            return !wallLocations.isWall(at: WallLocation(gridLocation: GridLocation(avenue: avenue, street: street - 1), side: .above))
+        case (let avenue, let street, .west):
+            return !wallLocations.isWall(at: WallLocation(gridLocation: GridLocation(avenue: avenue - 1, street: street), side: .right))
+        }
+    }
+    
     func isMerlinMissionManagerMode() -> Bool {
         return ProcessInfo.processInfo.environment["merlinMissionManagerMode"] == "IGIS"
     }

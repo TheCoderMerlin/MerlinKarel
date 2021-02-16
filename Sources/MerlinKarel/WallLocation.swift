@@ -16,9 +16,12 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-public enum CompassDirection: Double, Hashable {
-    case north = 0
-    case east  = 90
-    case south = 180
-    case west  = 270
+public struct WallLocation: Hashable, Equatable {
+    let gridLocation: GridLocation
+    let side: Side
+
+    public init(gridLocation: GridLocation, side: Side) {
+        self.gridLocation = gridLocation
+        self.side = side
+    }
 }

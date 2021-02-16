@@ -16,9 +16,12 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-public enum CompassDirection: Double, Hashable {
-    case north = 0
-    case east  = 90
-    case south = 180
-    case west  = 270
+// In determining whether or not a wall is present we need to consider
+// equivalent locations (e.g. a wall south of a street is the equivalent
+// to a wall north of the below street)
+// Therefore, to simplify, we only permit walls to be placed NORTH (above)
+// or EAST (right) of an intersection
+public enum Side {
+    case above
+    case right
 }

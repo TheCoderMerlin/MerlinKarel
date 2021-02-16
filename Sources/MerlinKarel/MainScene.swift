@@ -74,6 +74,18 @@ public class MainScene : Scene, KeyDownHandler {
         let initialSituation = world!.initialSituation
         let goalSituation = world!.goalSituation
 
+        // Set up walls
+        // For aesthetic reasons, we do all of the above walls first,
+        // followed by the right walls
+        for wallLocation in world!.wallLocations.walls.filter({ $0.side == .above }) {
+            let wall = Wall(wallLocation: wallLocation)
+            interactionLayer.insert(entity: wall, at: .front)
+        }
+        for wallLocation in world!.wallLocations.walls.filter({ $0.side == .right }) {
+            let wall = Wall(wallLocation: wallLocation)
+            interactionLayer.insert(entity: wall, at: .front)
+        }
+
         // Set up beepers in initial situation
         for (gridLocation, count) in initialSituation.gridLocationBeeperCounts {
             interactionLayer.add(beeperAt: gridLocation, count: count)
@@ -123,11 +135,15 @@ public class MainScene : Scene, KeyDownHandler {
             guard let key = world.merlinMissionManagerKey() else {
                 fatalError("key required in merlinMissionManagerMode")
             }
-            print("Success!")
-            print(key)
 
             // Allow any running animations to complete
             sleep(UInt32(Style.standardAnimationDurationSeconds * 2.0))
+
+            if goalMet {
+                print("Success!")
+                print(key)
+            }
+            
             exit(goalMet ? 0 : 1)
         }
     }
@@ -139,7 +155,8 @@ public class MainScene : Scene, KeyDownHandler {
 
         // Ignore key presses in MerlinMissionManagerMode
         if !world.isMerlinMissionManagerMode() {
-            if code == "Space" {
+            switch code {
+            case "Space": // Toggle goal layer
                 if showMode == .running {
                     insert(layer: goalBackgroundLayer, at: .front)
                     insert(layer: goalInteractionLayer, at: .inFrontOf(object: goalBackgroundLayer))
@@ -148,9 +165,15 @@ public class MainScene : Scene, KeyDownHandler {
                     remove(layer: goalBackgroundLayer)
                 }
                 showMode = showMode.toggled()
+            case "KeyF": // Faster animation
+                interactionLayer.karel.increaseAnimationSpeed()
+            case "KeyS": // Slower animation
+                interactionLayer.karel.decreaseAnimationSpeed()
+            default:
+                break
             }
         }
     }
-    
+
     
 }

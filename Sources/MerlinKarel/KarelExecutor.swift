@@ -106,6 +106,15 @@ open class KarelExecutor {
         guard let karel = karel else {
             fatalError("karel is required for move()")
         }
+        guard let world = karel.world else {
+            fatalError("world is required for move()")
+        }
+        guard world.mayMoveForward(from: karel.currentGridLocation, heading: karel.currentDirection) else {
+            printKarel(isSuccessful: false, "Karel may not move forward from here")
+            isTerminated = true
+            return
+        }
+        
         printKarel(isSuccessful: true, "move()")
         karel.animateForward()
         semaphore.wait()

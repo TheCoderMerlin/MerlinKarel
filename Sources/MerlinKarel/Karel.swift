@@ -69,6 +69,16 @@ class Karel: KarelRenderableEntity {
         animationDurationSeconds = durationSeconds
     }
 
+    func increaseAnimationSpeed() {
+        animationDurationSeconds -= Style.animationDurationDelta
+        animationDurationSeconds = max(animationDurationSeconds, Style.minimumAnimationDurationSeconds)
+    }
+
+    func decreaseAnimationSpeed() {
+        animationDurationSeconds += Style.animationDurationDelta
+        animationDurationSeconds = min(animationDurationSeconds, Style.maximumAnimationDurationSeconds)
+    }
+
     func setDidFinishNotification(_ didFinishNotification: @escaping DidFinishNotification) {
         self.didFinishNotification = didFinishNotification
     }

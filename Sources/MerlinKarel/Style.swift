@@ -41,7 +41,15 @@ class Style {
     static let gridFont = "30pt Arial"
 
     static let standardAnimationDurationSeconds = 1.0
+    static let maximumAnimationDurationSeconds = 5.0
+    static let minimumAnimationDurationSeconds = 0.1
+    static let animationDurationDelta = 0.1
     static let merlinMissionManagerAnimationDurationSeconds = 0.0
+
+    // Wall styles
+    static let wallThickness = 20
+    static let wallStrokeStyle = StrokeStyle(color: Color(.bisque))
+    static let wallFillStyle = StrokeStyle(color: Color(.firebrick))
 
     // Beepers
     static let beeperStrokeStyle = StrokeStyle(color: Color(.orange))
