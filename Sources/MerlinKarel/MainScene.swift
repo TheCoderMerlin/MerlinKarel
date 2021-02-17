@@ -77,14 +77,12 @@ public class MainScene : Scene, KeyDownHandler {
         // Set up walls
         // For aesthetic reasons, we do all of the above walls first,
         // followed by the right walls
-        for wallLocation in world!.wallLocations.walls.filter({ $0.side == .above }) {
-            let wall = Wall(wallLocation: wallLocation)
-            interactionLayer.insert(entity: wall, at: .front)
-        }
-        for wallLocation in world!.wallLocations.walls.filter({ $0.side == .right }) {
-            let wall = Wall(wallLocation: wallLocation)
-            interactionLayer.insert(entity: wall, at: .front)
-        }
+        setup(wallLocations: world!.wallLocations.walls.filter({ $0.side == .above }), on: interactionLayer)
+        setup(wallLocations: world!.wallLocations.walls.filter({ $0.side == .right }), on: interactionLayer)
+        
+        setup(wallLocations: world!.wallLocations.walls.filter({ $0.side == .above }), on: goalInteractionLayer)
+        setup(wallLocations: world!.wallLocations.walls.filter({ $0.side == .right }), on: goalInteractionLayer)
+        
 
         // Set up beepers in initial situation
         for (gridLocation, count) in initialSituation.gridLocationBeeperCounts {
@@ -172,6 +170,13 @@ public class MainScene : Scene, KeyDownHandler {
             default:
                 break
             }
+        }
+    }
+
+    private func setup(wallLocations: Set<WallLocation>, on layer: InteractionLayer) {
+        for wallLocation in wallLocations {
+            let wall = Wall(wallLocation: wallLocation)
+            layer.insert(entity: wall, at: .front)
         }
     }
 
