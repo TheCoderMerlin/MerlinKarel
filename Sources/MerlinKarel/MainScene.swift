@@ -142,7 +142,7 @@ public class MainScene : Scene, KeyDownHandler {
                 print(key)
             }
             
-            exit(goalMet ? 0 : 1)
+            exit(0)
         }
     }
 
