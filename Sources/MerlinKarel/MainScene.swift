@@ -140,6 +140,8 @@ public class MainScene : Scene, KeyDownHandler {
             if goalMet {
                 print("Success!")
                 print(key)
+            } else {
+                print("Failed to achieve goal.")
             }
             
             exit(0)
