@@ -20,29 +20,29 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 public class ShellDirector : Director {
-    private static var worldPlannableType: WorldPlannable.Type? = nil
+    private static var worldPlanType: WorldPlan.Type? = nil
     private static var karelExecutorType: KarelExecutor.Type? = nil
 
-    public static func createWorld(worldPlannableType: WorldPlannable.Type,
+    public static func createWorld(worldPlanType: WorldPlan.Type,
                             karelExecutorType: KarelExecutor.Type) {
-        Self.worldPlannableType = worldPlannableType
+        Self.worldPlanType = worldPlanType
         Self.karelExecutorType = karelExecutorType
     }
     
     required init() {
         super.init()
         
-        guard let worldPlannableType = Self.worldPlannableType else {
-            fatalError("worldPlannableType must be establishished prior to initialization")
+        guard let worldPlanType = Self.worldPlanType else {
+            fatalError("worldPlanType must be establishished prior to initialization")
         }
-        let worldPlannable = worldPlannableType.init()
+        let worldPlan = worldPlanType.init()
         
         guard let karelExecutorType = Self.karelExecutorType else {
             fatalError("karelExecutorType must be established prior to initialization")
         }
         let karelExecutor = karelExecutorType.init()
           
-        enqueueScene(scene:MainScene(worldPlannable: worldPlannable, karelExecutor: karelExecutor))
+        enqueueScene(scene:MainScene(worldPlan: worldPlan, karelExecutor: karelExecutor))
     }
 }
 

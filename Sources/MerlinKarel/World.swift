@@ -46,13 +46,13 @@ class World {
     }
 
     convenience init(canvasSize: Size,
-                     worldPlannable: WorldPlannable) {
-        let pixelsBetweenStreets = (canvasSize.height - (Style.worldTopMargin + Style.worldBottomMargin)) / (worldPlannable.streetCount() - 1)
-        let pixelsBetweenAvenues = (canvasSize.width - (Style.worldLeftMargin + Style.worldRightMargin)) / (worldPlannable.avenueCount()  - 1)
+                     worldPlan: WorldPlan) {
+        let pixelsBetweenStreets = (canvasSize.height - (Style.worldTopMargin + Style.worldBottomMargin)) / (worldPlan.streetCount() - 1)
+        let pixelsBetweenAvenues = (canvasSize.width - (Style.worldLeftMargin + Style.worldRightMargin)) / (worldPlan.avenueCount()  - 1)
 
-        self.init(avenueCount: worldPlannable.avenueCount(), streetCount: worldPlannable.streetCount(), wallLocations: worldPlannable.wallLocations(),
+        self.init(avenueCount: worldPlan.avenueCount(), streetCount: worldPlan.streetCount(), wallLocations: worldPlan.wallLocations(),
                   pixelsBetweenStreets: pixelsBetweenStreets, pixelsBetweenAvenues: pixelsBetweenAvenues,
-                  initialSituation: worldPlannable.initialSituation(), goalSituation: worldPlannable.goalSituation())
+                  initialSituation: worldPlan.initialSituation(), goalSituation: worldPlan.goalSituation())
     }
 
     func pointOnGrid(at gridLocation: GridLocation) -> Point {

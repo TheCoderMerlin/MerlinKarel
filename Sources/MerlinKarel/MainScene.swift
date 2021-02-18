@@ -44,14 +44,14 @@ public class MainScene : Scene, KeyDownHandler {
     let goalBackgroundLayer = BackgroundLayer(color: Style.goalBackgroundColor)
     let goalInteractionLayer = InteractionLayer()
 
-    let worldPlannable: WorldPlannable
+    let worldPlan: WorldPlan
     let karelExecutor: KarelExecutor
 
     var world: World? = nil
 
 
-    public init(worldPlannable: WorldPlannable, karelExecutor: KarelExecutor) {
-        self.worldPlannable = worldPlannable
+    public init(worldPlan: WorldPlan, karelExecutor: KarelExecutor) {
+        self.worldPlan = worldPlan
         self.karelExecutor = karelExecutor
         
         // Using a meaningful name can be helpful for debugging
@@ -70,7 +70,7 @@ public class MainScene : Scene, KeyDownHandler {
 
     public override func preSetup(canvasSize: Size, canvas: Canvas) {
         // Set up world
-        world = World(canvasSize: canvasSize, worldPlannable: worldPlannable)
+        world = World(canvasSize: canvasSize, worldPlan: worldPlan)
         let initialSituation = world!.initialSituation
         let goalSituation = world!.goalSituation
 
