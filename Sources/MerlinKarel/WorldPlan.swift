@@ -23,7 +23,7 @@ open class WorldPlan {
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // UTILITY FUNCTIONS
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    func addHorizontalWallSegment(wallLocations: inout WallLocations, from: GridLocation, through: GridLocation) {
+    public func addHorizontalWallSegment(wallLocations: inout WallLocations, from: GridLocation, through: GridLocation) {
         precondition(from.street == through.street, "Streets must be the same for horizontal segments")
         let increment = (through.avenue - from.avenue).signum()
         if increment == 0 {
@@ -37,7 +37,7 @@ open class WorldPlan {
         }
     }
 
-    func addVerticalWallSegment(wallLocations: inout WallLocations, from: GridLocation, through: GridLocation) {
+    public func addVerticalWallSegment(wallLocations: inout WallLocations, from: GridLocation, through: GridLocation) {
         precondition(from.avenue == through.avenue, "Avenues must be the same for vertical segments")
         let increment = (through.street - from.street).signum()
         if increment == 0 {
@@ -50,7 +50,7 @@ open class WorldPlan {
         }
     }
 
-    func addWallSegment(wallLocations: inout WallLocations, from: GridLocation, through: GridLocation) {
+    public func addWallSegment(wallLocations: inout WallLocations, from: GridLocation, through: GridLocation) {
         switch (from, through) {
         case (let from, let through) where from.street == through.street:
             addHorizontalWallSegment(wallLocations: &wallLocations, from: from, through: through)
