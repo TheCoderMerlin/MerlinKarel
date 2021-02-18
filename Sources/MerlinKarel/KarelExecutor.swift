@@ -182,9 +182,43 @@ open class KarelExecutor {
             return false
         }
         printKarel(isSuccessful: true, "isFrontClear()")
-
-        return false
+        guard let karel = karel else {
+            fatalError("karel is required for isFrontClear()")
+        }
+        guard let world = karel.world else {
+            fatalError("world is required for isFrontClear()")
+        }
+        return world.mayMoveForward(from: karel.currentGridLocation, heading: karel.currentDirection) 
     }
+
+    public func isLeftClear() -> Bool {
+        guard !isTerminated else {
+            return false
+        }
+        printKarel(isSuccessful: true, "isLeftClear()")
+        guard let karel = karel else {
+            fatalError("karel is required for isLeftClear()")
+        }
+        guard let world = karel.world else {
+            fatalError("world is required for isLeftClear()")
+        }
+        return world.mayMoveForward(from: karel.currentGridLocation, heading: karel.currentDirection.toLeft()) 
+    }
+    
+    public func isRightClear() -> Bool {
+        guard !isTerminated else {
+            return false
+        }
+        printKarel(isSuccessful: true, "isRightClear()")
+        guard let karel = karel else {
+            fatalError("karel is required for isRightClear()")
+        }
+        guard let world = karel.world else {
+            fatalError("world is required for isRightClear()")
+        }
+        return world.mayMoveForward(from: karel.currentGridLocation, heading: karel.currentDirection.toRight()) 
+    }
+    
 
     // Returns true iff there is a beeper on the corner where karel is located
     public func isBeeperHere() -> Bool {
@@ -211,6 +245,45 @@ open class KarelExecutor {
         printKarel(isSuccessful: true, "isFacingNorth()")
         
         return karel.isFacing(direction: .north)
+    }
+
+    // Returns true iff karel is facing east
+    public func isFacingEast() -> Bool {
+        guard !isTerminated else {
+            return false
+        }
+        guard let karel = karel else {
+            fatalError("karel is required for isFacingEast()")
+        }
+        printKarel(isSuccessful: true, "isFacingEast()")
+        
+        return karel.isFacing(direction: .east)
+    }
+
+    // Returns true iff karel is facing south
+    public func isFacingSouth() -> Bool {
+        guard !isTerminated else {
+            return false
+        }
+        guard let karel = karel else {
+            fatalError("karel is required for isFacingSouth()")
+        }
+        printKarel(isSuccessful: true, "isFacingSouth()")
+        
+        return karel.isFacing(direction: .south)
+    }
+
+    // Returns true iff karel is facing west
+    public func isFacingWest() -> Bool {
+        guard !isTerminated else {
+            return false
+        }
+        guard let karel = karel else {
+            fatalError("karel is required for isFacingWest()")
+        }
+        printKarel(isSuccessful: true, "isFacingWest()")
+        
+        return karel.isFacing(direction: .west)
     }
 
 

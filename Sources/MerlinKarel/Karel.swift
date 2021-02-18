@@ -179,7 +179,7 @@ class Karel: KarelRenderableEntity {
     }
 
     func rotate(to targetDirection: CompassDirection) {
-        currentRotateRadians = targetDirection.rawValue * Double.pi / 180.0
+        currentRotateRadians = Double(targetDirection.rawValue) * Double.pi / 180.0
         currentDirection     = targetDirection
         
         nextRotateRadians = currentRotateRadians
@@ -190,7 +190,7 @@ class Karel: KarelRenderableEntity {
         guard tweenRotate == nil else {
             fatalError("Requested to animate rotation but animation already in progress")
         }
-        nextRotateRadians = targetDirection.rawValue * Double.pi / 180.0
+        nextRotateRadians = Double(targetDirection.rawValue) * Double.pi / 180.0
         nextDirection     = targetDirection
 
         // For north to west, we need to rotate DOWN from Double.pi * 2.0, otherwise we'll animate a 270 deg turn CLOCKWISE

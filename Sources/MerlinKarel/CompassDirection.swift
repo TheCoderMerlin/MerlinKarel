@@ -16,9 +16,20 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-public enum CompassDirection: Double, Hashable {
+public enum CompassDirection: Int, Hashable {
     case north = 0
     case east  = 90
     case south = 180
     case west  = 270
+
+    func toRight() -> Self {
+        let heading = (self.rawValue + 90) % 360
+        return Self(rawValue: heading)!
+    }
+
+    func toLeft() -> Self {
+        let heading = ((self.rawValue - 90) + 360) % 360
+        return Self(rawValue: heading)!
+    }
+
 }
