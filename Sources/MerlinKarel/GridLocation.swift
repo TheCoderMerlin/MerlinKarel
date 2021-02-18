@@ -17,8 +17,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 public struct GridLocation: Hashable, Equatable, Comparable, CustomStringConvertible {
-    let avenue: Int
-    let street: Int
+    public let avenue: Int
+    public let street: Int
 
     public init(avenue:Int, street: Int) {
         self.avenue = avenue
