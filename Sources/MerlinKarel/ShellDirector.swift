@@ -41,8 +41,13 @@ public class ShellDirector : Director {
             fatalError("karelExecutorType must be established prior to initialization")
         }
         let karelExecutor = karelExecutorType.init()
-          
+
         enqueueScene(scene:MainScene(worldPlan: worldPlan, karelExecutor: karelExecutor))
     }
+
+    public override func framesPerSecond() -> Int {
+        return 30
+    }
+    
 }
 

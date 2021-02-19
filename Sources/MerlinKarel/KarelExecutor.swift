@@ -286,5 +286,35 @@ open class KarelExecutor {
         return karel.isFacing(direction: .west)
     }
 
+    // Returns true iff karel is at goal location
+    public func isGoalLocation() -> Bool {
+        guard !isTerminated else {
+            return false
+        }
+        printKarel(isSuccessful: true, "isGoalLocation()")
+        guard let karel = karel else {
+            fatalError("karel is required for isRightClear()")
+        }
+        guard let world = karel.world else {
+            fatalError("world is required for isRightClear()")
+        }
 
+        let goalLocation = world.goalSituation.karelGridLocation
+        let currentLocation = karel.currentGridLocation
+        return currentLocation == goalLocation
+    }
+
+    // Returns true iff karel has any beepers in his bag
+    public func anyBeepersInBag() -> Bool {
+        guard !isTerminated else {
+            return false
+        }
+        printKarel(isSuccessful: true, "anyBeepersInBag()")
+        guard let karel = karel else {
+            fatalError("karel is required for anyBeepersInBag()")
+        }
+
+        return karel.beeperCount > 0
+    }
+    
 }
