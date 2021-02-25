@@ -23,13 +23,13 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 class Karel: KarelRenderableEntity {
     typealias DidFinishNotification = () -> ()
-    
+
     private let url = URL(string: "https://www.codermerlin.com/resources/BlueRobotWithHat.png")
     private let image: Image
+    private let beeperBackground: Ellipse
     private let beeperText: Text
     private var imageLocation: Point? = nil
     private var imageSize: Size? = nil
-
 
     private var tweenTranslate: Tween<Point>? = nil
     private var tweenRotate: Tween<Double>? = nil
@@ -58,9 +58,10 @@ class Karel: KarelRenderableEntity {
             fatalError("Unable to form url")
         }
         image = Image(sourceURL: url)
+        beeperBackground = Ellipse(center: Point.zero, radiusX: 0, radiusY: 0, fillMode: .fillAndStroke)
         beeperText = Text(location: Point.zero, text: "0")
         beeperText.alignment = .center
-        beeperText.baseline = .top
+        beeperText.baseline = .middle
 
         super.init(name: "Karel")
     }
@@ -112,6 +113,11 @@ class Karel: KarelRenderableEntity {
         imageSize = Size(width: size, height: size)
         imageLocation = pointFrom(gridLocation: currentGridLocation)
 
+        // Set text background size
+        let backgroundSize = size / 5
+        beeperBackground.radiusX = backgroundSize
+        beeperBackground.radiusY = backgroundSize
+
         // Determine font size
         let fontSize = size / 6
         beeperText.font = "\(fontSize)pt \(Style.karelBeeperFont)"
@@ -128,6 +134,7 @@ class Karel: KarelRenderableEntity {
                 canvas.render(image)
 
                 if beeperCount > 0 {
+                    canvas.render(Style.karelBeeperTextBackgroundFillStyle, Style.karelBeeperTextBackgroundStrokeStyle,  beeperBackground)
                     canvas.render(Style.karelBeeperTextFillStyle, beeperText)
                 }
             }
@@ -153,8 +160,11 @@ class Karel: KarelRenderableEntity {
 
         // Set text
         beeperText.text = "\(beeperCount)"
-        let textOffset = Point(x: 0, y: imageSize.height / 5)
+        let textOffset = Point(x: 0, y: imageSize.height / 3)
         beeperText.location = Point(center) + textOffset
+
+        // Set tet background location
+        beeperBackground.center = beeperText.location
 
         // If we were animating and now completed, clean up and inform our callback (if specified)
         if tweenTranslate?.isCompleted == true {

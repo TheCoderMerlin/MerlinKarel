@@ -60,6 +60,8 @@ class Style {
     static let beeperFont                  = "20pt Courier"
 
     // Karel
+    static let karelBeeperTextBackgroundFillStyle = FillStyle(color: Color(.midnightblue))
+    static let karelBeeperTextBackgroundStrokeStyle = StrokeStyle(color: Color(.white))
     static let karelBeeperTextFillStyle = FillStyle(color: Color(.white))
     static let karelBeeperFont = "Courier" // size determined dynamically
 }
