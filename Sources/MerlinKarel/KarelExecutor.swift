@@ -133,6 +133,19 @@ open class KarelExecutor {
         karel.animateTurnLeft()
         semaphore.wait()
     }
+    // Turn karel clockwise ninety degrees
+        public func turnRight() {
+        guard !isTerminated else {
+            return
+        }
+        guard let karel = karel else {
+            fatalError("karel is required for turnRight()")
+        }
+        printKarel(isSuccessful: true, "turnRight()")
+        
+        karel.animateTurnRight()
+        semaphore.wait()
+    }
 
     // Place a beeper at the current corner (multiple beepers may be placed)
     public func putDownBeeper() {
